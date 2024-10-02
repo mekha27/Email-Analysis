@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Emails</title>
+</head>
+<body>
+    <header>
+        <h1>All Emails</h1>
+        <nav>
+            # <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'seen_emails' %}">Seen Emails</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+    <div>
+        {% for email in emails %}
+            <div>
+                <h3>Email ID: {{ email.id }}</h3>
+                <p>Snippet: {{ email.snippet }}</p>
+                <!-- You can display more details here -->
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

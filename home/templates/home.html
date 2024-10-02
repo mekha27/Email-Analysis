@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2> Emails</h2>
+
+<div class="emails-list">
+    {% for email in emails %}
+        <div class="email-item">
+            <p><strong>Email Content:</strong></p>
+            <p class="email-text">{{ email.content }}</p>
+            
+            {% if email.sentiment_results.count > 0 %}
+                <div class="sentiment-result">
+                    <p><strong>Sentiment:</strong> 
+                        {% for result in email.sentiment_results.all %}
+                            <span class="sentiment {{ result.sentiment_label|lower }}">{{ result.sentiment_label }}</span> 
+                            (Score: {{ result.sentiment_score }})
+                        {% endfor %}
+                    </p>
+                </div>
+            {% else %}
+                <form action="{% url 'analyze_sentiment' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="email_content" value="{{ email.content }}">
+                    <button type="submit" class="analyze-button">Analyze Sentiment</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No emails found.</p>
+    {% endfor %}
+</div>
+
+<!-- Visualization Section -->
+<div class="chart-container">
+    <h3>Email Statistics</h3>
+    <canvas id="emailChart" width="400" height="200"></canvas>
+</div>
+
+<a href="{% url 'send_email' %}" class="send-email-button">Send an Email</a>
+<a href="{% url 'logout' %}" class="logout-button">Logout</a>
+<form method="GET" action="{% url 'download_report' %}">
+    <button type="submit">Download Report as PDF</button>
+</form>
+
+<style>
+    /* Overall container styling */
+    .emails-list {
+        margin: 20px auto;
+        max-width: 800px;
+    }
+
+    /* Individual email item styling */
+    .email-item {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Email content styling */
+    .email-text {
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        color: #444;
+        white-space: pre-wrap; /* Maintain whitespace and line breaks */
+    }
+
+    /* Sentiment styling */
+    .sentiment {
+        font-size: 18px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: #fff;
+        margin-right: 5px;
+    }
+
+    .sentiment.positive {
+        background-color: #4caf50; /* Green for Positive */
+    }
+
+    .sentiment.negative {
+        background-color: #f44336; /* Red for Negative */
+    }
+
+    .sentiment.neutral {
+        background-color: #ffeb3b; /* Yellow for Neutral */
+    }
+
+    /* Button styling */
+    .analyze-button, .logout-button, .send-email-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .analyze-button:hover, .logout-button:hover, .send-email-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Chart container styling */
+    .chart-container {
+        margin: 20px auto;
+        max-width: 800px;
+        text-align: center;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script>
+// Prepare data for the chart
+const emailCount = {{ emails|length }};
+const sentimentCounts = {
+    positive: 0,
+    negative: 0,
+    neutral: 0
+};
+
+// Count the sentiments
+{% for email in emails %}
+    {% for result in email.sentiment_results.all %}
+        {% if result.sentiment_label == 'Positive' %}
+            sentimentCounts.positive++;
+        {% elif result.sentiment_label == 'Negative' %}
+            sentimentCounts.negative++;
+        {% elif result.sentiment_label == 'Neutral' %}
+            sentimentCounts.neutral++;
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+const ctx = document.getElementById('emailChart').getContext('2d');
+const emailChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Total Emails', 'Positive Sentiments', 'Negative Sentiments', 'Neutral Sentiments'],
+        datasets: [{
+            label: 'Email Statistics',
+            data: [emailCount, sentimentCounts.positive, sentimentCounts.negative, sentimentCounts.neutral],
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(255, 206, 86, 0.6)'
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

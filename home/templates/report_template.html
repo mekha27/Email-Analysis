@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sentiment Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { text-align: center; }
+        .email-section { margin-bottom: 30px; }
+        .email-content { margin-bottom: 10px; }
+        .sentiment-score { font-weight: bold; }
+        .chart-container { width: 100%; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Email Sentiment Report</h1>
+    
+    <div class="email-section">
+        <h2>Email Sentiment Results:</h2>
+        <ul>
+            {% for email in emails %}
+            <li>
+                <div class="email-content">
+                    <strong>Email Content:</strong> {{ email.content }}
+                </div>
+                <div class="sentiment-score">
+                    Sentiment: {{ email.sentimentanalysisresult.sentiment_label }} 
+                    (Score: {{ email.sentimentanalysisresult.sentiment_score }})
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="chart-container">
+        <h2>Sentiment Distribution Chart:</h2>
+        <!-- Chart.js script to generate bar chart -->
+        <canvas id="sentimentChart" width="400" height="200"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('sentimentChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Positive', 'Neutral', 'Negative'],
+                datasets: [{
+                    label: 'Email Sentiments',
+                    data: [{{ sentiment_counts.positive }}, {{ sentiment_counts.neutral }}, {{ sentiment_counts.negative }}],
+                    backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Automator - All Emails</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        header nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        header nav a:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 80px auto 60px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-list {
+            margin-bottom: 40px;
+        }
+        .email-list h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .email-item {
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s;
+        }
+        .email-item:hover {
+            background-color: #e9ecef;
+        }
+        .email-content {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .email-timestamp {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .email-snippet {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Email Automator - Your Emails</h1>
+        <nav>
+            <a href="{% url 'all_emails' %}">All Emails</a>
+            <a href="{% url 'seen_emails' %}">Seen Emails</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Received Emails Section -->
+        <div class="email-list">
+            <h2>Emails</h2>
+            {% for email in received_emails %}
+                <div class="email-item">
+                    <p class="email-snippet">Snippet:</p>
+                    <p class="email-content">{{ email.content }}</p>
+                    <p class="email-timestamp">Received at: {{ email.received_at }}</p>
+                </div>
+            {% empty %}
+                <p>No received emails available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Sent Emails Section -->
+        <div class="email-list">
+            <h2>Sent Emails</h2>
+            {% for email in sent_emails %}
+                <div class="email-item">
+                    <p class="email-snippet">Snippet:</p>
+                    <p class="email-content">{{ email.content }}</p>
+                    <p class="email-timestamp">Sent at: {{ email.sent_at }}</p>
+                </div>
+            {% empty %}
+                <p>No sent emails available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 Email Automator. All rights reserved.
+    </footer>
+</body>
+</html>

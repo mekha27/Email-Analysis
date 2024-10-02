@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Sentiment Analysis Result</h2>
+<div class="email-content">
+    <p><strong>Email Content:</strong></p>
+    <p class="email-text">{{ email_content }}</p>
+</div>
+
+<div class="sentiment-result">
+    <p><strong>Sentiment:</strong> <span class="sentiment {{ sentiment|lower }}">{{ sentiment }}</span></p>
+    <p><strong>Sentiment Score:</strong> {{ sentiment_score }}</p>
+</div>
+
+<div class="summary">
+    {% if sentiment == "Positive" %}
+        <p>Great! It looks like this email has a positive sentiment.</p>
+    {% elif sentiment == "Negative" %}
+        <p>Uh-oh! This email has a negative sentiment. Consider addressing any concerns mentioned.</p>
+    {% else %}
+        <p>This email is neutral. No strong sentiment detected.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'home' %}" class="back-button">Back to Home</a>
+
+<style>
+    /* Overall container styling */
+    .email-content, .sentiment-result {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Heading styling */
+    h2 {
+        font-family: 'Arial', sans-serif;
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Email content styling */
+    .email-text {
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: 'Courier New', Courier, monospace;
+        color: #444;
+        white-space: pre-wrap; /* Maintain whitespace and line breaks */
+    }
+
+    /* Sentiment styling */
+    .sentiment {
+        font-size: 18px;
+        color: #ffffff;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Sentiment colors based on analysis */
+    .sentiment.positive {
+        background-color: #4caf50; /* Green for Positive */
+    }
+
+    .sentiment.negative {
+        background-color: #f44336; /* Red for Negative */
+    }
+
+    .sentiment.neutral {
+        background-color: #ffeb3b; /* Yellow for Neutral */
+    }
+
+    /* Back button styling */
+    .back-button {
+        display: block;
+        width: fit-content;
+        padding: 10px 20px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
