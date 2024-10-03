@@ -36,8 +36,8 @@ def emails_list(request):
         credentials = Credentials(
             token=social_token.token,
             refresh_token=social_token.token_secret,
-            client_id=social_app.client_id,
-            client_secret=social_app.secret,
+            client_id='http://598730522363-dcvhg57ilgbouke4fm75q8t7hbuv6cj1.apps.googleusercontent.com',
+            client_secret='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',
             token_uri='https://oauth2.googleapis.com/token'
         )
 
